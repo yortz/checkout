@@ -1,4 +1,4 @@
-class Item
+class Item < ActiveRecord::Base
   attr_accessor :code, :name, :price
 
   def initialize(code, name, price)
@@ -8,3 +8,4 @@ class Item
   end
 
 end
+
