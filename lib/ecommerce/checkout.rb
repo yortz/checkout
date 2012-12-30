@@ -3,7 +3,7 @@ module Ecommerce
     attr_accessor :pricing_rules, :cart, :total
 
     def initialize(pricing_rules)
-      @pricing_rules = Array.new.push pricing_rules
+      @pricing_rules = pricing_rules
       @cart  = []
       @total = 0
     end
@@ -19,21 +19,29 @@ module Ecommerce
     end
 
    def method_missing(method_name, *args)
-     if method_name.to_s.split("_")[0] == "buy" && method_name.to_s.split("_").last == "free"
-       treshold = method_name.to_s.split("_")[1]
-       quantity = method_name.to_s.split("_")[3]
-       if treshold.match(/\d/) && quantity.match(/\d/)
-         discount(treshold, quantity, args.first)
-       end
-     else
-       super
+     begin
+       check_method_call method_name, args.first
+     rescue NoMethodError
+       p "you called a pricing rule that doesn't match the offer discount or the bulk discount method call pattern!"
      end
    end 
 
    private
 
+   def offer_discount? method_name
+     method_name.to_s.split("_")[0] == "buy" && method_name.to_s.split("_").last == "free"
+   end
+
+   def check_method_call method_name, arg
+     if offer_discount?(method_name)
+       treshold = method_name.to_s.split("_")[1]
+       quantity = method_name.to_s.split("_")[3]
+       discount(quantity.to_f, arg) if treshold.match(/\d/) && quantity.match(/\d/)
+     end
+   end
+
    def get_total
-     @total - @discount
+     @discount.present? ? @total - @discount : @total
    end
 
    def cart_total
@@ -46,19 +54,16 @@ module Ecommerce
       end
    end
 
-   def discount(treshold, quantity, item_code)
-     if code_for?(item_code) && quantity_for(item_code) == treshold.to_i
-       price    = Item.find_by_code(item_code).price
-       @discount = quantity.to_f * price
+   def discount(quantity, item_code)
+     if is_offer?(quantity, item_code)
+       price     = Item.find_by_code(item_code).price
+       @discount = quantity * price
      end
    end
 
-  def code_for? item_code
-    @cart.map(&:code).include? "#{item_code}"
-  end
-
-  def quantity_for item_code
-    @cart.count {|item| item.code == "#{item_code}"} - 1 
+  def is_offer? quantity, item_code
+    pattern = Array.new quantity + 1 , item_code
+    (@cart.map(&:code) * ",").scan(pattern  * ",").any?
   end
 
   end
