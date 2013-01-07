@@ -6,19 +6,15 @@ describe "Checkout" do
   let(:pricing_rules) { ["buy_1_get_1_free FR1", "3_for_4.50 SR1"] }
   let(:co) { Ecommerce::Checkout.new pricing_rules }
 
-  after :each do
-    co.cart = []
-  end
-
   describe "#init" do
     it "returns a set of rules" do
       co.pricing_rules.should eq ["buy_1_get_1_free FR1", "3_for_4.50 SR1"]
     end
   end
 
-  let(:fr1) { Item.create! :code => "FR1", :name => "Fruit Tea", :price => "3.11" }
-  let(:sr1) { Item.create! :code => "SR1", :name => "Strawberries", :price => "5.00" }
-  let(:cf1) { Item.create! :code => "CF1", :name => "Coffee", :price => "11.23" }
+  let(:fr1) { create :fr1 }
+  let(:sr1) { create :sr1 }
+  let(:cf1) { create :cf1 }
   
   describe "#scan" do
     it "adds an item to the cart" do
