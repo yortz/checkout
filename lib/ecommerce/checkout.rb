@@ -20,9 +20,7 @@ module Ecommerce
 
    def method_missing(method_name, *args)
      begin
-       @method = method_name
-       @arg = args.first
-       check_method_call @method, @arg
+       check_method_call method_name, args.first
      rescue NoMethodError
        p "you called a pricing rule that doesn't match the offer discount or the bulk discount method call pattern!"
      end
@@ -39,40 +37,32 @@ module Ecommerce
    end
 
    def bulk_discount! method_name, item_code
-     quantity     = method_name.to_s.split("_")[1].to_i
+     quantity      = method_name.to_s.split("_")[0].to_i
      bulk_discount = method_name.to_s.split("_").last.to_f
      items_count   = self.cart.map(&:code).count(item_code).to_i
-     p "items count is #{items_count}"
      if  quantity == items_count
-       p "#{method_name} running now bitch!"
-       fullprice = Item.find_by_code(item_code).price
-       promotion = fullprice - bulk_discount 
+       fullprice      = Item.find_by_code(item_code).price
+       promotion      = fullprice - bulk_discount
        @bulk_discount = promotion * items_count
      end
    end
 
    def offer_discount! method_name, item_code
-     treshold = method_name.to_s.split("_")[1]
+     threshold = method_name.to_s.split("_")[1]
      quantity = method_name.to_s.split("_")[3]
-     discount(quantity.to_f, item_code) if treshold.match(/\d/) && quantity.match(/\d/)
+     discount(quantity.to_f, item_code) if threshold.match(/\d/) && quantity.match(/\d/)
    end
 
    def check_method_call method_name, arg
      if offer_discount? method_name
        offer_discount! method_name, arg
-       puts "offer"
      elsif bulk_discount? method_name
-       puts "bulk"
        bulk_discount! method_name, arg
      end
    end
 
    def get_total
-     p @bulk_discount
      @total - (@discount ||= 0) - (@bulk_discount ||= 0)
-     #@rule1 = @discount.present? ? @total - @discount : @total
-     #@rule2 = @bulk_discount.present? ? @total - @bulk_discount : @total
-     #@total = @rule1 + @rule2
    end
 
    def cart_total
@@ -94,8 +84,6 @@ module Ecommerce
 
   def is_offer? quantity, item_code
     pattern = Array.new quantity + 1 , item_code
-    p pattern
-    p self.cart.map(&:code)
     (self.cart.map(&:code) * ",").scan(pattern  * ",").any?
   end
 
