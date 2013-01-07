@@ -6,6 +6,10 @@ describe "Checkout" do
   let(:pricing_rules) { ["buy_1_get_1_free FR1", "3_for_4.50 SR1"] }
   let(:co) { Ecommerce::Checkout.new pricing_rules }
 
+  after :each do
+    co.cart = []
+  end
+
   describe "#init" do
     it "returns a set of rules" do
       co.pricing_rules.should eq ["buy_1_get_1_free FR1", "3_for_4.50 SR1"]

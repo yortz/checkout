@@ -10,6 +10,7 @@ gem 'sqlite3'
 group :test, :development do
   gem 'pry'
   gem 'rspec-rails', '~> 2.0'
+  gem 'factory_girl_rails'
 end
 
 # Gems used only for assets and not required
