@@ -49,7 +49,7 @@ module Ecommerce
 
    def offer_discount! method_name, item_code
      threshold = method_name.to_s.split("_")[1]
-     quantity = method_name.to_s.split("_")[3]
+     quantity  = method_name.to_s.split("_")[3]
      discount(quantity.to_f, item_code) if threshold.match(/\d/) && quantity.match(/\d/)
    end
 
