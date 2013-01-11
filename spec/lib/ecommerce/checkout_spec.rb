@@ -3,7 +3,9 @@ require File.expand_path("../../../spec_helper", __FILE__)
 
 describe "Checkout" do
 
-  let(:pricing_rules) { ["buy_1_get_1_free FR1", "3_for_4.50 SR1"] }
+  let(:discount_rule) {Ecommerce::PricingRule.new "buy_1_get_1_free FR1"}
+  let(:bulk_discount_rule) {Ecommerce::PricingRule.new "3_for_4.50 SR1"}
+  let(:pricing_rules) {[ discount_rule.name, bulk_discount_rule.name ]}
   let(:co) { Ecommerce::Checkout.new pricing_rules }
 
   describe "#init" do
@@ -27,27 +29,34 @@ describe "Checkout" do
   end
 
   describe "#total" do
-    it "calculates total with no discount" do
-      co.scan fr1
-      co.scan sr1
-      co.scan fr1
-      co.scan cf1
-      co.total.should eq 22.45
+    context "when no rules" do
+      it "doesn't apply discount" do
+        co.scan fr1
+        co.scan sr1
+        co.scan fr1
+        co.scan cf1
+        co.total.should eq 22.45
+      end
     end
 
-    it "buy_1_get_1_free FR1" do
-      co.scan fr1
-      co.scan fr1
-      co.total.should eq 3.11
+    context "when buy_1_get_1_free FR1" do
+      it "applies discount rule" do
+        co.scan fr1
+        co.scan fr1
+        co.total.should eq 3.11
+      end
     end
 
-    it "3_for_4.50 SR1" do
-      co.scan sr1
-      co.scan sr1
-      co.scan fr1
-      co.scan sr1
-      co.total.should eq 16.61
+    context "when 3_for_4.50 SR1" do
+      it "applies bulk discount rule" do
+        co.scan sr1
+        co.scan sr1
+        co.scan fr1
+        co.scan sr1
+        co.total.should eq 16.61
+      end
     end
+
   end
   
 end
