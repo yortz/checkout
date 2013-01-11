@@ -1,6 +1,11 @@
 module Ecommerce
   class BulkDiscountRule < PricingRule
 
+    def self.respond_to?(method_name)
+      return true if matches?(method_name)
+      super
+    end
+
     def self.matches? method_name
       method_name.to_s.split("_")[0] =~ /\d/ && method_name.to_s.split("_").last =~ /\d+\.+\d*/
     end

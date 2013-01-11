@@ -15,10 +15,12 @@ module Ecommerce
     end 
 
     def self.check_method_call method_name, item_code
-      if DiscountRule.matches? method_name
+      if DiscountRule.respond_to?(method_name)
         DiscountRule.discount! method_name, item_code
-      elsif BulkDiscountRule.matches? method_name
+        nil
+      elsif BulkDiscountRule.respond_to?(method_name)
         BulkDiscountRule.discount! method_name, item_code
+        nil
       end
     end
 
