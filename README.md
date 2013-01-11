@@ -1,5 +1,5 @@
-Simple checkout system answering the following requirements:
-======================================================
+Simple checkout system:
+======================
 
 it sells only 3 products.
 -------------------------
