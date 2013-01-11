@@ -1,0 +1,11 @@
+Result for no discount rule is WRONG:
+
+Basket: FR1, SR1, FR1, CF1 | Total price expected: £22.25 
+
+this should instead be:
+
+Basket: FR1, SR1, FR1, CF1 | Total price expected: £22.45 
+
+Also, this IMHO should handle the discount rule (buy 1 get 1 free) since
+in our cart we have 2 FR1 items.
+
