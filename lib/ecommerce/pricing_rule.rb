@@ -1,6 +1,12 @@
 module Ecommerce
   class PricingRule < Struct.new :name
     attr_accessor :name
+    
+    class << self
+      attr_reader :discount_classes
+    end
+
+    @discount_classes = [Ecommerce::DiscountRule, Ecommerce::BulkDiscountRule]
 
     def initialize(name)
       @name = name
@@ -15,13 +21,11 @@ module Ecommerce
     end 
 
     def self.check_method_call method_name, item_code
-      if DiscountRule.respond_to?(method_name)
-        DiscountRule.discount! method_name, item_code
-        nil
-      elsif BulkDiscountRule.respond_to?(method_name)
-        BulkDiscountRule.discount! method_name, item_code
-        nil
+      discount_class = Ecommerce::PricingRule.discount_classes.find do |klass|
+        klass.discount! method_name, item_code
       end
+      return discount_class.discount!(method_name, item_code) if discount_class
+      nil
     end
 
   end
