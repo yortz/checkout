@@ -3,10 +3,11 @@ Simple checkout system answering the following requirements:
 
 it sells only 3 products.
 -------------------------
-
+```
 | Product code | FR1       | SR1          | CF1    |
 | Name         | Fruit tea | Strawberries | Coffee |
 | Price        | £ 3.11    | £ 5.00       | £11.23 |
+```
 
 implements 2 rules for handling discounts:
 ------------------------------------------
@@ -32,10 +33,11 @@ Price = co.total
 
 TEST DATA:
 ----------
-
+```
 | Basket: FR1, SR1, FR1, CF1 | Total price expected: £22.25 |
 | Basket: FR1, FR1           | Total price expected: £3.11  |
 | Basket: SR1, SR1, FR1, SR1 | Total price expected: £16.61 |
+```
 
 RUN:
 ----
